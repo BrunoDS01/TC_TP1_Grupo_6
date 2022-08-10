@@ -16,6 +16,7 @@ class InputFunction:
 
         self.transferFunction = None
 
+
     def setTransferFunction(self):
         self.num = sp.Poly(self.num, self.s)
         self.den = sp.poly(self.den, self.s)
@@ -24,3 +25,9 @@ class InputFunction:
         den = np.array(self.den.all_coeffs()).astype(float)
 
         self.transferFunction = ss.TransferFunction(num, den)
+
+    def calculateBode(self, w=None):
+        return ss.bode(self.transferFunction, w, n=10000)
+
+    def calculatePolesZeros(self):
+        return self.transferFunction.poles, self.transferFunction.zeros

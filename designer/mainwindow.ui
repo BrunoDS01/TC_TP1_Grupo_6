@@ -121,14 +121,28 @@
        <item row="0" column="1" rowspan="3">
         <widget class="QWidget" name="widget" native="true">
          <layout class="QGridLayout" name="gridLayout_7">
-          <item row="3" column="0">
+          <item row="4" column="1">
+           <widget class="QPushButton" name="addPolinomialButton">
+            <property name="text">
+             <string>Agregar polinomio</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
            <widget class="QPushButton" name="addTermButton">
             <property name="text">
              <string>Agregar Término</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="3">
+          <item row="4" column="2">
+           <widget class="QPushButton" name="erasePolinomialButton">
+            <property name="text">
+             <string>Borrar Polinomio</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="3">
            <widget class="QLabel" name="currentPolLabel">
             <property name="text">
              <string>1</string>
@@ -139,13 +153,6 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="coefDoubleBox">
-            <property name="maximum">
-             <double>1000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
            <widget class="QSpinBox" name="ordenSpinbox">
             <property name="maximum">
              <number>1000000000</number>
@@ -153,13 +160,27 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>Valor</string>
+             <string>Orden (s^)</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Coeficiente</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="coefDoubleBox">
+            <property name="maximum">
+             <double>1000000000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
            <widget class="QSpinBox" name="coefMultiplier">
             <property name="minimum">
              <number>-12</number>
@@ -169,27 +190,6 @@
             </property>
             <property name="singleStep">
              <number>3</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Orden</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QPushButton" name="addPolinomialButton">
-            <property name="text">
-             <string>Agregar polinomio</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QPushButton" name="erasePolinomialButton">
-            <property name="text">
-             <string>Borrar Polinomio</string>
             </property>
            </widget>
           </item>
@@ -252,36 +252,17 @@
     <item row="2" column="0" rowspan="2">
      <widget class="QTabWidget" name="plotWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
         <string>Bode</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="QWidget" name="amplitudeBodePlot" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>500</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>166674</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QWidget" name="phaseBode" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>500</width>
-            <height>0</height>
-           </size>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="plotBodeButton">
+          <property name="text">
+           <string>Graficar Bode</string>
           </property>
          </widget>
         </item>
@@ -295,6 +276,26 @@
           </property>
          </widget>
         </item>
+        <item row="0" column="0">
+         <widget class="QWidget" name="amplitudeBodeBox" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>500</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QWidget" name="phaseBodeBox" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>500</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
@@ -302,16 +303,6 @@
         <string>Respuesta Temporal</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="1" rowspan="2">
-         <widget class="QWidget" name="visualConfWidget_2" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0" rowspan="2">
          <widget class="QWidget" name="temporalResponsePlot" native="true">
           <property name="minimumSize">
@@ -324,6 +315,16 @@
            <size>
             <width>166674</width>
             <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" rowspan="2">
+         <widget class="QWidget" name="visualConfWidget_2" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
            </size>
           </property>
          </widget>
