@@ -29,15 +29,15 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.figureAmplitude = Figure()
         self.canvasAmplitude = FigureCanvas(self.figureAmplitude)
         self.axesAmplitude = self.figureAmplitude.subplots()
-        self.amplitudeBodeBox.layout().addWidget(NavigationToolbar(self.canvasAmplitude, self))
-        self.amplitudeBodeBox.layout().addWidget(self.canvasAmplitude)
+        self.amplitudeBodePlot.addWidget(NavigationToolbar(self.canvasAmplitude, self))
+        self.amplitudeBodePlot.addWidget(self.canvasAmplitude)
 
         # Gráfico de fase
         self.figurePhase = Figure()
         self.canvasPhase = FigureCanvas(self.figurePhase)
         self.axesPhase = self.figurePhase.subplots()
-        self.phasePlotBox.addWidget(NavigationToolbar(self.canvasPhase, self))
-        self.phasePlotBox.addWidget(self.canvasPhase)
+        self.phaseBodePlot.addWidget(NavigationToolbar(self.canvasPhase, self))
+        self.phaseBodePlot.addWidget(self.canvasPhase)
 
         # Configuración de las pestañas y clicks
         self.addTermButton.clicked.connect(self.addTermToPolinomial)

@@ -277,24 +277,10 @@
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QWidget" name="amplitudeBodeBox" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>500</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="amplitudeBodePlot"/>
         </item>
         <item row="1" column="0">
-         <widget class="QWidget" name="phaseBodeBox" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>500</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="phaseBodePlot"/>
         </item>
        </layout>
       </widget>
