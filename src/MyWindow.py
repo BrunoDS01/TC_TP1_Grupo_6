@@ -1,5 +1,8 @@
 # PyQt5 modules
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QMessageBox
+from PyQt5.QtCore import Qt
+
+import sympy as sp
 
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
@@ -13,52 +16,76 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         # Configuración de las pestañas y clicks
-        self.polinomialButton.clicked.connect(self.changeTranferStackedToPolinomial)
-        self.polesButton.clicked.connect(self.changeTranferStackedToPoles)
-        self.firstOrderButton.clicked.connect(self.changePolesOrderStackedToFirst)
-        self.secondOrderButton.clicked.connect(self.changePolesOrderStackedToSecond)
-
-        self.addTermButton.clicked.connect(self.addTermToTranferFunction)
+        self.addTermButton.clicked.connect(self.addTermToPolinomial)
+        self.addPolinomialButton.clicked.connect(self.addPolinomialToFunction)
+        self.erasePolinomialButton.clicked.connect(self.erasePolinomial)
+        self.eraseEquationButton.clicked.connect(self.eraseEquation)
+        self.addFunctionButton.clicked.connect(self.addFunction)
 
         # Lista de la funciones agregadas
         self.functions = []
         self.currentFunction = InputFunction()
+        self.currentPolinomial = sp.sympify('0')
 
 
     # Funciones de las pestañas y clicks
-    def changeTranferStackedToPoles(self):
-        self.transferStacked.setCurrentIndex(1)
-
-    def changeTranferStackedToPolinomial(self):
-        self.transferStacked.setCurrentIndex(0)
-
-    def changePolesOrderStackedToFirst(self):
-        self.polesStacked.setCurrentIndex(0)
-
-    def changePolesOrderStackedToSecond(self):
-        self.polesStacked.setCurrentIndex(1)
 
 
     # Agrega término a la ecuación de transferencia de la función actual
-    def addTermToTranferFunction(self):
-        if self.polinomialButton.isChecked():
-            coef = self.coefDoubleBox.value() * (10 ** self.coefMultiplier.value())
-            order = self.ordenSpinbox.value()
+    def addTermToPolinomial(self):
+        s = sp.symbols('s')
+        coef = self.coefDoubleBox.value() * (10 ** self.coefMultiplier.value())
+        order = self.ordenSpinbox.value()
 
-            if self.numButton.isChecked():
-                if self.currentFunction.numPolinomial is False:
-                    self.currentFunction.num = []
+        polinomio = coef * s**order
 
-                self.currentFunction.num[order] = coef
-            else:
-                if self.currentFunction.denPolinomial is False:
-                    self.currentFunction.den = []
+        self.currentPolinomial += polinomio
 
-                self.currentFunction.den[order] = coef
+        self.currentPolLabel.setText(str(self.currentPolinomial))
 
-        elif self.polesButton.isChecked():
-            if self.firstOrderButton.isChecked():
-                w0 = self.w0FirstOrderDoubleBox * (10 ** self.w0FirstOrderMultiplier)
-                multplier = self.poleFirstOrderMultiplicidad
+    def addPolinomialToFunction(self):
+        if self.numButton.isChecked() and self.currentPolinomial:
+            self.currentFunction.num *= self.currentPolinomial
+            self.currentPolinomial = sp.sympify('0')
+            self.numLabel.setText(str(self.currentFunction.num))
+            self.currentPolLabel.setText('0')
+
+        elif self.denButton.isChecked() and self.currentPolinomial != sp.sympify('0'):
+            self.currentFunction.den *= self.currentPolinomial
+            self.currentPolinomial = sp.sympify('0')
+            self.denLabel.setText(str(self.currentFunction.den))
+            self.currentPolLabel.setText('0')
+
+    def erasePolinomial(self):
+        self.currentPolinomial = sp.sympify('0')
+        self.currentPolLabel.setText('0')
+
+    def eraseEquation(self):
+        self.currentFunction.num = sp.sympify('1')
+        self.currentFunction.den = sp.sympify('1')
+        self.numLabel.setText('1')
+        self.denLabel.setText('1')
+
+    # Agrega la función introducida como función transferencia
+    def addFunction(self):
+        if self.currentFunction.den == sp.sympify('0'):
+            print('den = 0')
+        else:
+            self.currentFunction.setTransferFunction()
+            self.currentFunction.origin = 'T'
+
+            self.functions.append(self.currentFunction)
+            self.currentFunction = InputFunction()
+            self.numLabel.setText('1')
+            self.denLabel.setText('1')
+
+            item = QListWidgetItem('Función')
+            item.setCheckState(Qt.Unchecked)
+
+            self.functionsList.addItem(item)
+
+
+
+
 
 
