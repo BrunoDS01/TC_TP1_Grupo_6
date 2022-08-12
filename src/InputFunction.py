@@ -3,18 +3,23 @@ import scipy.signal as ss
 import sympy as sp
 
 class InputFunction:
-    def __init__(self):
+    def __init__(self, origin = 'T', name = 'Función'):
+        self.origin = origin
+        self.name = name
+
+        self.transferFunction = None
+
         self.s = sp.symbols('s')
         self.num = sp.sympify('1')
         self.den = sp.sympify('1')
 
-        self.origin = 'T'
-
-        self.abs = []
-        self.phase = []
         self.freq = []
+        self.mag = []
+        self.phase = []
 
-        self.transferFunction = None
+        self.time = []
+        self.input = []
+        self.output = []
 
 
     def setTransferFunction(self):
@@ -31,3 +36,8 @@ class InputFunction:
 
     def calculatePolesZeros(self):
         return self.transferFunction.poles, self.transferFunction.zeros
+
+    def setBode(self, f, m, p):
+        self.freq = f
+        self.mag = m
+        self.phase = p

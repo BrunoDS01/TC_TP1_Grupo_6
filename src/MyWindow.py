@@ -1,5 +1,5 @@
 # PyQt5 modules
-from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QMessageBox, QInputDialog
+from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QMessageBox, QInputDialog, QFileDialog
 from PyQt5.QtCore import Qt
 
 from matplotlib.figure import Figure
@@ -12,6 +12,7 @@ import sympy as sp
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
 from InputFunction import InputFunction
+from ImportData import readSpiceData
 
 
 class MyWindow(QMainWindow, Ui_MainWindow):
@@ -49,6 +50,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.eraseEquationButton.clicked.connect(self.eraseEquation)
         self.addFunctionButton.clicked.connect(self.addFunction)
         self.plotBodeButton.clicked.connect(self.updateBodePlot)
+        self.spiceButton.clicked.connect(self.importSpice)
 
     # Funciones de las pestañas y clicks
 
@@ -109,19 +111,49 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             self.currentFunction.setTransferFunction()
             self.currentFunction.origin = 'T'
 
+            functionName = QInputDialog.getText(self, 'Agregar función', 'Nombre de la función:')[0]
+            if len(functionName) < 1:
+                functionName = "Función " + str(len(self.functions))
+
+            self.currentFunction.name = functionName
+
             self.functions.append(self.currentFunction)
             self.currentFunction = InputFunction()
             self.numLabel.setText('1')
             self.denLabel.setText('1')
 
-            functionName = QInputDialog.getText(self, 'Agregar función', 'Nombre de la función:')[0]
+            item = QListWidgetItem(functionName)
+            item.setCheckState(Qt.Checked)
+
+            self.functionsList.addItem(item)
+
+    def importSpice(self):
+        filepath = QFileDialog.getOpenFileName(self, 'Open file', 'c:\\', "Text files (*.txt)")[0]
+
+        try:
+            freq, mag, phase = readSpiceData(filepath)
+            functionName = QInputDialog.getText(self, 'LTSpice', 'Nombre de la función:')[0]
             if len(functionName) < 1:
                 functionName = "Función " + str(len(self.functions))
+
+            newFunction = InputFunction(origin='L', name = functionName)
+            newFunction.setBode(freq, mag, phase)
+
+            self.functions.append(newFunction)
 
             item = QListWidgetItem(functionName)
             item.setCheckState(Qt.Checked)
 
             self.functionsList.addItem(item)
+
+        except:
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setText("Error al importar datos")
+            msgBox.setWindowTitle("Advertencia")
+            msgBox.exec()
+
+
 
     def updateBodePlot(self):
         self.axesAmplitude.clear()
@@ -133,7 +165,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                     minFreq = self.minFreqValue.value() * (10 ** self.minFreqMultiplier.value())
                     maxFreq = self.maxFreqValue.value() * (10 ** self.maxFreqMultiplier.value())
                     if self.freqMode.currentText() == 'Hz':
-                        minFreq *= 2 *  np.pi
+                        minFreq *= 2 * np.pi
                         maxFreq *= 2 * np.pi
 
                     w = np.logspace((np.log10(minFreq)), (np.log10(maxFreq)), num=10000)
@@ -144,6 +176,13 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                         freq /= (2 *  np.pi)
                         maxFreq /= (2 * np.pi)
 
+
+                    self.axesAmplitude.semilogx(freq, mag, label='T')
+                    self.figureAmplitude.tight_layout()
+                    self.canvasAmplitude.draw()
+
+                elif self.functions[i].origin == 'L':
+                    freq, mag, phase = self.functions[i].freq, self.functions[i].mag, self.functions[i].phase
 
                     self.axesAmplitude.semilogx(freq, mag, label='T')
                     self.figureAmplitude.tight_layout()
