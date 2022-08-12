@@ -6,6 +6,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
+import numpy as np
 import sympy as sp
 
 # Project modules
@@ -27,6 +28,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         # Configuración gráfica
         # Gráfico de amplitud
         self.figureAmplitude = Figure()
+        self.figureAmplitude.set_tight_layout(True)
         self.canvasAmplitude = FigureCanvas(self.figureAmplitude)
         self.axesAmplitude = self.figureAmplitude.subplots()
         self.amplitudeBodePlot.addWidget(NavigationToolbar(self.canvasAmplitude, self))
@@ -34,6 +36,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
         # Gráfico de fase
         self.figurePhase = Figure()
+        self.figurePhase.set_tight_layout(True)
         self.canvasPhase = FigureCanvas(self.figurePhase)
         self.axesPhase = self.figurePhase.subplots()
         self.phaseBodePlot.addWidget(NavigationToolbar(self.canvasPhase, self))
@@ -121,12 +124,28 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             self.functionsList.addItem(item)
 
     def updateBodePlot(self):
+        self.axesAmplitude.clear()
+        self.axesPhase.clear()
+
         for i in range(len(self.functions)):
             if self.functionsList.item(i).checkState() == 2:
                 if self.functions[i].origin == 'T':
-                    w, mag, phase = self.functions[i].calculateBode()
+                    minFreq = self.minFreqValue.value() * (10 ** self.minFreqMultiplier.value())
+                    maxFreq = self.maxFreqValue.value() * (10 ** self.maxFreqMultiplier.value())
+                    if self.freqMode.currentText() == 'Hz':
+                        minFreq *= 2 *  np.pi
+                        maxFreq *= 2 * np.pi
 
-                    self.axesAmplitude.semilogx(w, mag, label='T', marker= 'D')
+                    w = np.logspace((np.log10(minFreq)), (np.log10(maxFreq)), num=10000)
+
+                    freq, mag, phase = self.functions[i].calculateBode(w = w)
+
+                    if self.freqMode.currentText() == 'Hz':
+                        freq /= (2 *  np.pi)
+                        maxFreq /= (2 * np.pi)
+
+
+                    self.axesAmplitude.semilogx(freq, mag, label='T')
                     self.figureAmplitude.tight_layout()
                     self.canvasAmplitude.draw()
 
