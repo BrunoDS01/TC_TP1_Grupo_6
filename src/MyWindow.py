@@ -12,7 +12,7 @@ import sympy as sp
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
 from InputFunction import InputFunction
-from ImportData import readSpiceData
+from ImportData import readSpiceBode
 
 
 class MyWindow(QMainWindow, Ui_MainWindow):
@@ -109,7 +109,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
         else:
             self.currentFunction.setTransferFunction()
-            self.currentFunction.origin = 'T'
+            self.currentFunction.origin = 'Transfer'
 
             functionName = QInputDialog.getText(self, 'Agregar función', 'Nombre de la función:')[0]
             if len(functionName) < 1:
@@ -131,12 +131,12 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         filepath = QFileDialog.getOpenFileName(self, 'Open file', 'c:\\', "Text files (*.txt)")[0]
 
         try:
-            freq, mag, phase = readSpiceData(filepath)
+            freq, mag, phase = readSpiceBode(filepath)
             functionName = QInputDialog.getText(self, 'LTSpice', 'Nombre de la función:')[0]
             if len(functionName) < 1:
                 functionName = "Función " + str(len(self.functions))
 
-            newFunction = InputFunction(origin='L', name = functionName)
+            newFunction = InputFunction(origin='Spice', name = functionName)
             newFunction.setBode(freq, mag, phase)
 
             self.functions.append(newFunction)
@@ -159,34 +159,46 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.axesAmplitude.clear()
         self.axesPhase.clear()
 
+        minFrequency = self.minFreqValue.value() * (10 ** self.minFreqMultiplier.value())
+        maxFrequency = self.maxFreqValue.value() * (10 ** self.maxFreqMultiplier.value())
+
         for i in range(len(self.functions)):
             if self.functionsList.item(i).checkState() == 2:
-                if self.functions[i].origin == 'T':
-                    minFreq = self.minFreqValue.value() * (10 ** self.minFreqMultiplier.value())
-                    maxFreq = self.maxFreqValue.value() * (10 ** self.maxFreqMultiplier.value())
-                    if self.freqMode.currentText() == 'Hz':
-                        minFreq *= 2 * np.pi
-                        maxFreq *= 2 * np.pi
 
-                    w = np.logspace((np.log10(minFreq)), (np.log10(maxFreq)), num=10000)
+                # Caso de ingresar función transferencia
+                if self.functions[i].origin == 'Transfer':
+                    if self.freqMode.currentText() == 'Hz':
+                        minFreq = minFrequency * 2 * np.pi
+                        maxFreq = maxFrequency * 2 * np.pi
+
+                    w = np.logspace((np.log10(minFreq)), (np.log10(maxFreq)), num=5000)
 
                     freq, mag, phase = self.functions[i].calculateBode(w = w)
 
                     if self.freqMode.currentText() == 'Hz':
-                        freq /= (2 *  np.pi)
-                        maxFreq /= (2 * np.pi)
+                        freq = freq / (2 * np.pi)
 
+                    self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
+                    self.axesPhase.semilogx(freq, phase, label=self.functions[i].name)
 
-                    self.axesAmplitude.semilogx(freq, mag, label='T')
-                    self.figureAmplitude.tight_layout()
-                    self.canvasAmplitude.draw()
-
-                elif self.functions[i].origin == 'L':
+                # Caso LTSpice
+                elif self.functions[i].origin == 'Spice':
                     freq, mag, phase = self.functions[i].freq, self.functions[i].mag, self.functions[i].phase
 
-                    self.axesAmplitude.semilogx(freq, mag, label='T')
-                    self.figureAmplitude.tight_layout()
-                    self.canvasAmplitude.draw()
+                    if self.freqMode.currentText() == 'Rad/s':
+                        freq = [fr * 2 * np.pi for fr in freq]
 
+                    self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
+                    self.axesPhase.semilogx(freq, phase, label = self.functions[i].name)
 
+        self.axesAmplitude.set_xlim(minFrequency, maxFrequency)
+        self.axesPhase.set_xlim(minFrequency, maxFrequency)
 
+        self.axesAmplitude.grid(True, which='both')
+        self.axesPhase.grid(True, which='both')
+
+        self.axesAmplitude.legend(loc=0)
+        self.axesPhase.legend(loc=0)
+
+        self.canvasAmplitude.draw()
+        self.canvasPhase.draw()

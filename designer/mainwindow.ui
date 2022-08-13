@@ -46,7 +46,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -75,180 +75,7 @@
            </size>
           </property>
           <layout class="QGridLayout" name="gridLayout_11">
-           <item row="4" column="0">
-            <layout class="QGridLayout" name="gridLayout_10">
-             <item row="3" column="1" colspan="2">
-              <widget class="QLabel" name="label_6">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Rango fase</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="2">
-              <layout class="QGridLayout" name="gridLayout_16">
-               <item row="0" column="0">
-                <widget class="QDoubleSpinBox" name="phaseMaxValue">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <double>100000.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="phaseMaxMultiplier">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="4" column="1">
-              <layout class="QGridLayout" name="gridLayout_15">
-               <item row="0" column="0">
-                <widget class="QDoubleSpinBox" name="phaseMinValue">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <double>100000.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="phaseMinMultiplier">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item row="6" column="0">
-            <widget class="QPushButton" name="plotBodeButton">
-             <property name="text">
-              <string>Graficar Bode</string>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="0">
-            <layout class="QGridLayout" name="gridLayout_9">
-             <item row="4" column="2">
-              <layout class="QGridLayout" name="gridLayout_13">
-               <item row="0" column="0">
-                <widget class="QDoubleSpinBox" name="amplitudeMaxValue">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <double>100000.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="amplitudeMaxMultiplier">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                 <property name="minimum">
-                  <number>-12</number>
-                 </property>
-                 <property name="maximum">
-                  <number>12</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>3</number>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="4" column="1">
-              <layout class="QGridLayout" name="gridLayout_12">
-               <item row="0" column="0">
-                <widget class="QDoubleSpinBox" name="amplitudeMinValue">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <double>100000.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="amplitudeMinMultiplier">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                 <property name="minimum">
-                  <number>-12</number>
-                 </property>
-                 <property name="maximum">
-                  <number>12</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>3</number>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="3" column="1" colspan="2">
-              <widget class="QLabel" name="label_2">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Rango amplitud</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="5" column="0">
             <layout class="QGridLayout" name="gridLayout_19">
              <item row="1" column="1">
               <widget class="QSpinBox" name="minFreqMultiplier">
@@ -326,7 +153,7 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Rad/seg</string>
+                 <string>Rad/s</string>
                 </property>
                </item>
               </widget>
@@ -348,6 +175,13 @@
               </widget>
              </item>
             </layout>
+           </item>
+           <item row="4" column="0">
+            <widget class="QPushButton" name="plotBodeButton">
+             <property name="text">
+              <string>Graficar Bode</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -396,7 +230,24 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0">
-         <widget class="QWidget" name="zeroesPolesPlot" native="true"/>
+         <widget class="QWidget" name="zeroesPolesPlot" native="true">
+          <layout class="QGridLayout" name="gridLayout_9">
+           <item row="0" column="0">
+            <layout class="QVBoxLayout" name="verticalLayout_7"/>
+           </item>
+           <item row="0" column="1">
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <item>
+              <widget class="QPushButton" name="pushButton">
+               <property name="text">
+                <string>Graficar Polos y Ceros</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
