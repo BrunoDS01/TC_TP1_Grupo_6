@@ -3,7 +3,7 @@ import scipy.signal as ss
 import sympy as sp
 
 class InputFunction:
-    def __init__(self, origin = 'T', name = 'Función'):
+    def __init__(self, origin = 'Transfer', name = 'Función'):
         self.origin = origin
         self.name = name
 
@@ -32,7 +32,8 @@ class InputFunction:
         self.transferFunction = ss.TransferFunction(num, den)
 
     def calculateBode(self, w=None):
-        return ss.bode(self.transferFunction, w, n=10000)
+        self.freq, self.mag, self.phase = ss.bode(self.transferFunction, w, n=5000)
+        return self.freq, self.mag, self.phase
 
     def calculatePolesZeros(self):
         return self.transferFunction.poles, self.transferFunction.zeros

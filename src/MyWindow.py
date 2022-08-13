@@ -43,6 +43,22 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.phaseBodePlot.addWidget(NavigationToolbar(self.canvasPhase, self))
         self.phaseBodePlot.addWidget(self.canvasPhase)
 
+        # Gráfico de polos y ceros
+        self.figurePolesZeros = Figure()
+        self.figurePolesZeros.set_tight_layout(True)
+        self.canvasPolesZeros = FigureCanvas(self.figurePolesZeros)
+        self.axesPolesZeros = self.figurePolesZeros.subplots()
+        self.polesZerosPlot.addWidget(NavigationToolbar(self.canvasPolesZeros, self))
+        self.polesZerosPlot.addWidget(self.canvasPolesZeros)
+
+        # Gráfico de polos y ceros
+        self.figureTemporal = Figure()
+        self.figureTemporal.set_tight_layout(True)
+        self.canvasTemporal = FigureCanvas(self.figureTemporal)
+        self.axesTemporal = self.figureTemporal.subplots()
+        self.temporalResponsePlot.addWidget(NavigationToolbar(self.canvasTemporal, self))
+        self.temporalResponsePlot.addWidget(self.canvasTemporal)
+
         # Configuración de las pestañas y clicks
         self.addTermButton.clicked.connect(self.addTermToPolinomial)
         self.addPolinomialButton.clicked.connect(self.addPolinomialToFunction)
@@ -51,6 +67,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.addFunctionButton.clicked.connect(self.addFunction)
         self.plotBodeButton.clicked.connect(self.updateBodePlot)
         self.spiceButton.clicked.connect(self.importSpice)
+        self.addPolesZeros.clicked.connect(self.plotPolesZeros)
 
     # Funciones de las pestañas y clicks
 
@@ -154,7 +171,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             msgBox.exec()
 
 
-
+    # Grafica Bode en función de las funciones seleccionadas y su origen
     def updateBodePlot(self):
         self.axesAmplitude.clear()
         self.axesPhase.clear()
@@ -202,3 +219,31 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
         self.canvasAmplitude.draw()
         self.canvasPhase.draw()
+
+
+    # Grafica polos y ceros de aquellas funciones ingresadas por función transferencia
+
+    def plotPolesZeros(self):
+        self.axesPolesZeros.clear()
+
+        for i in range(len(self.functions)):
+            if self.functionsList.item(i).checkState() == 2 and self.functions[i].origin == 'Transfer':
+                poles, zeros = self.functions[i].calculatePolesZeros()
+
+                if len(poles) != 0:
+                    polesLine = self.axesPolesZeros.scatter(np.real(poles), np.imag(poles),
+                                                            marker='x', label='Polos' + self.functions[i].name)
+
+                if len(zeros) != 0:
+                    self.zerosLine = self.axesPolesZeros.scatter(np.real(zeros), np.imag(zeros),
+                                                                 marker='o', label='Ceros' + self.functions[i].name)
+
+        self.axesPolesZeros.grid(visible=True)
+        self.axesPolesZeros.axhline(0, color='black', linewidth=1)
+        self.axesPolesZeros.axvline(0, color='black', linewidth=1)  # marcamos los ejes
+
+        self.axesPolesZeros.set_ylabel('jω')
+        self.axesPolesZeros.set_xlabel('σ')
+        self.axesPolesZeros.legend(loc=0)
+
+        self.figurePolesZeros.canvas.draw()
