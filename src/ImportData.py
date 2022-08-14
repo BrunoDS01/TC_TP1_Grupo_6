@@ -32,7 +32,7 @@ def readSpiceTime(filePath):
 
     # Empezamos a guardar datos cuando el primer caracter de un renglón sea un número
 
-    numberCharacters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '-', '+', 'e', 'E'}
+    numberCharacters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '-', '+'}
 
     while lines[0][0] not in numberCharacters:
         lines.pop(0)
@@ -60,7 +60,7 @@ def readCSVBode(filePath):
     lines = file.readlines()
 
     # Empezamos a guardar datos cuando el primer caracter de un renglón sea un número
-    numberCharacters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '-', '+', 'e', 'E'}
+    numberCharacters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '-', '+'}
 
     while lines[0][0] not in numberCharacters:
         lines.pop(0)

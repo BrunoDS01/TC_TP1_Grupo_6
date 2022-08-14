@@ -8,6 +8,7 @@ class InputFunction:
         self.name = name
 
         self.plotType = None
+        self.magType = None
 
         self.transferFunction = None
 
@@ -32,8 +33,16 @@ class InputFunction:
 
         self.transferFunction = ss.TransferFunction(num, den)
 
-    def calculateBode(self, w=None):
-        self.freq, self.mag, self.phase = ss.bode(self.transferFunction, w, n=5000)
+    def calculateBode(self, w=None, n = 1000):
+        self.freq, self.mag, self.phase = ss.bode(self.transferFunction, w, n=n)
+        return self.freq, self.mag, self.phase
+
+    def calculateFrequencyResponse(self, w=None, n = 1000):
+        w, y = ss.freqresp(self.transferFunction, w=w, n=n)
+        self.freq = w
+        self.mag = abs(y)
+        self.phase = np.unwrap(np.arctan2(y.imag, y.real)) * 180.0 / np.pi
+
         return self.freq, self.mag, self.phase
 
     def calculatePolesZeros(self):
