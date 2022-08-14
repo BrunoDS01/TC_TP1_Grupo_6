@@ -12,7 +12,7 @@ import sympy as sp
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
 from InputFunction import InputFunction
-from ImportData import readSpiceBode
+from ImportData import readSpiceBode, readSpiceTime, readCSVBode, readCSVTime
 
 
 class MyWindow(QMainWindow, Ui_MainWindow):
@@ -51,7 +51,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.polesZerosPlot.addWidget(NavigationToolbar(self.canvasPolesZeros, self))
         self.polesZerosPlot.addWidget(self.canvasPolesZeros)
 
-        # Gráfico de polos y ceros
+        # Gráfico de respuesta temporal
         self.figureTemporal = Figure()
         self.figureTemporal.set_tight_layout(True)
         self.canvasTemporal = FigureCanvas(self.figureTemporal)
@@ -67,6 +67,8 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.addFunctionButton.clicked.connect(self.addFunction)
         self.plotBodeButton.clicked.connect(self.updateBodePlot)
         self.spiceButton.clicked.connect(self.importSpice)
+        self.csvButton.clicked.connect(self.importCSV)
+        self.plotTemporalButton.clicked.connect(self.plotTemporalSignals)
         self.addPolesZeros.clicked.connect(self.plotPolesZeros)
 
     # Funciones de las pestañas y clicks
@@ -148,20 +150,90 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         filepath = QFileDialog.getOpenFileName(self, 'Open file', 'c:\\', "Text files (*.txt)")[0]
 
         try:
-            freq, mag, phase = readSpiceBode(filepath)
-            functionName = QInputDialog.getText(self, 'LTSpice', 'Nombre de la función:')[0]
-            if len(functionName) < 1:
-                functionName = "Función " + str(len(self.functions))
+            if self.frequencyButton.isChecked():
 
-            newFunction = InputFunction(origin='Spice', name = functionName)
-            newFunction.setBode(freq, mag, phase)
+                freq, mag, phase = readSpiceBode(filepath)
+                functionName = QInputDialog.getText(self, 'LTSpice', 'Nombre de la función:')[0]
+                if len(functionName) < 1:
+                    functionName = "Función " + str(len(self.functions))
 
-            self.functions.append(newFunction)
+                newFunction = InputFunction(origin='Spice', name = functionName)
+                newFunction.setBode(freq, mag, phase)
+                newFunction.plotType = 'Frequency'
 
-            item = QListWidgetItem(functionName)
-            item.setCheckState(Qt.Checked)
+                self.functions.append(newFunction)
 
-            self.functionsList.addItem(item)
+                item = QListWidgetItem(functionName)
+                item.setCheckState(Qt.Checked)
+
+                self.functionsList.addItem(item)
+
+            elif self.temporalButton.isChecked():
+                data = readSpiceTime(filepath)
+
+                for i in range(1, len(data)):
+                    functionName = QInputDialog.getText(self, 'LTSpice', 'Nombre la función: ' + str(i))[0]
+                    if len(functionName) < 1:
+                        functionName = "Función " + str(len(self.functions))
+
+                    newFunction = InputFunction(origin='Spice', name=functionName)
+                    newFunction.setTemporal(data[0], data[i])
+                    newFunction.plotType = 'Temporal'
+
+                    self.functions.append(newFunction)
+
+                    item = QListWidgetItem(functionName)
+                    item.setCheckState(Qt.Checked)
+
+                    self.functionsList.addItem(item)
+
+        except:
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setText("Error al importar datos")
+            msgBox.setWindowTitle("Advertencia")
+            msgBox.exec()
+
+    def importCSV(self):
+        filepath = QFileDialog.getOpenFileName(self, 'Abrir archivo', 'c:\\', "CSV files (*.csv)")[0]
+
+        try:
+            if self.frequencyButton.isChecked():
+
+                freq, mag, phase = readCSVBode(filepath)
+                functionName = QInputDialog.getText(self, 'CSV', 'Nombre de la función:')[0]
+                if len(functionName) < 1:
+                    functionName = "Función " + str(len(self.functions))
+
+                newFunction = InputFunction(origin='CSV', name=functionName)
+                newFunction.setBode(freq, mag, phase)
+                newFunction.plotType = 'Frequency'
+
+                self.functions.append(newFunction)
+
+                item = QListWidgetItem(functionName)
+                item.setCheckState(Qt.Checked)
+
+                self.functionsList.addItem(item)
+
+            elif self.temporalButton.isChecked():
+                data = readCSVTime(filepath)
+
+                for i in range(1, len(data)):
+                    functionName = QInputDialog.getText(self, 'CSV', 'Nombre de la función:' + str(i))[0]
+                    if len(functionName) < 1:
+                        functionName = "Función " + str(len(self.functions))
+
+                    newFunction = InputFunction(origin='CSV', name=functionName)
+                    newFunction.setTemporal(data[0], data[i])
+                    newFunction.plotType = 'Temporal'
+
+                    self.functions.append(newFunction)
+
+                    item = QListWidgetItem(functionName)
+                    item.setCheckState(Qt.Checked)
+
+                    self.functionsList.addItem(item)
 
         except:
             msgBox = QMessageBox()
@@ -198,8 +270,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                     self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
                     self.axesPhase.semilogx(freq, phase, label=self.functions[i].name)
 
-                # Caso LTSpice
-                elif self.functions[i].origin == 'Spice':
+                # Caso LTSpice o CSV
+                elif self.functions[i].origin == 'Spice' or self.functions[i].origin == 'CSV' \
+                        and self.functions[i].plotType == 'Frequency':
                     freq, mag, phase = self.functions[i].freq, self.functions[i].mag, self.functions[i].phase
 
                     if self.freqMode.currentText() == 'Rad/s':
@@ -219,6 +292,44 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
         self.canvasAmplitude.draw()
         self.canvasPhase.draw()
+
+    # Grafica las respuestas temporales en función de las funciones seleccionadas y su origen
+    def plotTemporalSignals(self):
+        self.axesTemporal.clear()
+
+        for i in range(len(self.functions)):
+            if self.functionsList.item(i).checkState() == 2:
+
+                # Caso de ingresar función transferencia
+                '''if self.functions[i].origin == 'Transfer':
+                    if self.freqMode.currentText() == 'Hz':
+                        minFreq = minFrequency * 2 * np.pi
+                        maxFreq = maxFrequency * 2 * np.pi
+
+                    w = np.logspace((np.log10(minFreq)), (np.log10(maxFreq)), num=5000)
+
+                    freq, mag, phase = self.functions[i].calculateBode(w=w)
+
+                    if self.freqMode.currentText() == 'Hz':
+                        freq = freq / (2 * np.pi)
+
+                    self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
+                    self.axesPhase.semilogx(freq, phase, label=self.functions[i].name)'''
+
+                # Caso LTSpice o CSV
+                if (self.functions[i].origin == 'Spice' or self.functions[i].origin == 'CSV') \
+                        and self.functions[i].plotType == 'Temporal':
+                    time, signal = self.functions[i].time, self.functions[i].signal
+
+                    self.axesTemporal.plot(time, signal, label=self.functions[i].name)
+
+        self.axesTemporal.grid(visible=True)
+        self.axesTemporal.axhline(0, color='black', linewidth=1)
+        self.axesTemporal.axvline(0, color='black', linewidth=1)
+
+        self.axesTemporal.legend(loc=0)
+
+        self.figureTemporal.canvas.draw()
 
 
     # Grafica polos y ceros de aquellas funciones ingresadas por función transferencia

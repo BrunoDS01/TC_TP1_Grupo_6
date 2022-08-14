@@ -7,6 +7,8 @@ class InputFunction:
         self.origin = origin
         self.name = name
 
+        self.plotType = None
+
         self.transferFunction = None
 
         self.s = sp.symbols('s')
@@ -18,8 +20,7 @@ class InputFunction:
         self.phase = []
 
         self.time = []
-        self.input = []
-        self.output = []
+        self.signal = []
 
 
     def setTransferFunction(self):
@@ -42,3 +43,7 @@ class InputFunction:
         self.freq = f
         self.mag = m
         self.phase = p
+
+    def setTemporal(self, t, s):
+        self.time = t
+        self.signal = s

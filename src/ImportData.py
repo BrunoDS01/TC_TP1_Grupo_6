@@ -15,7 +15,7 @@ def readSpiceBode(filePath):
     mag = []
     phase = []
 
-    for i in range(1, len(lines)):
+    for i in range(len(lines)):
         line = lines[i].split('\t')
         freq.append(float(line[0]))
 
@@ -38,15 +38,22 @@ def readSpiceTime(filePath):
         lines.pop(0)
 
     # Guardamos los datos
-    time = []
-    signal = []
+    numberOfSignals = len(lines[0].split('\t'))
 
-    for i in range(1, len(lines)):
+    data = []
+    for j in range(numberOfSignals):
+        data.append([])
+
+    for i in range(len(lines)):
         line = lines[i].split('\t')
-        time.append(float(line[0]))
-        signal.append(float(line[1]))
+        for j in range(numberOfSignals):
+            line[j] = line[j].replace('\n', '')
+            if(line[j] == ''):
+                data[j].append(0.0)
+            else:
+                data[j].append(float(line[j]))
 
-    return time, signal
+    return data
 
 def readCSVBode(filePath):
     file = open(filePath, 'r')
@@ -57,19 +64,18 @@ def readCSVBode(filePath):
     numberCharacters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '-', '+', 'e', 'E'}
 
     while lines[0][0] not in numberCharacters:
-        lines.pop()
+        lines.pop(0)
 
     # Guardamos los datos
     freq = []
     mag = []
     phase = []
 
-    for i in range(1, len(lines)):
-        line = lines[i].split(',', ' ', '\t')
-        line.remove('\n')
+    for i in range(len(lines)):
+        line = lines[i].split(',')
         freq.append(float(line[0]))
         mag.append(float(line[1]))
-        phase.append(float(line[2]))
+        phase.append(float(line[2].replace('n', '')))
 
     return freq, mag, phase
 
@@ -82,21 +88,25 @@ def readCSVTime(filePath):
     numberCharacters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '-', '+', 'e', 'E'}
 
     while lines[0][0] not in numberCharacters:
-        lines.pop()
+        lines.pop(0)
 
     # Guardamos los datos
-    time = []
-    signal = []
+    numberOfSignals = len(lines[0].split(','))
 
-    for i in range(1, len(lines)):
-        line = lines[i].split(',', ' ', '\t')
-        line.remove('\n')
-        time.append(float(line[0]))
-        signal.append(float(line[1]))
+    data = []
+    for j in range(numberOfSignals):
+        data.append([])
 
-    return time, signal
+    for i in range(len(lines)):
+        line = lines[i].split(',')
+        for j in range(numberOfSignals):
+            line[j] = line[j].replace('\n', '')
+            if(line[j] == ''):
+                data[j].append(0.0)
+            else:
+                data[j].append(float(line[j]))
 
-
+    return data
 
 
 
