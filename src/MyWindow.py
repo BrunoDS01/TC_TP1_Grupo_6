@@ -8,6 +8,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 
 import numpy as np
 import sympy as sp
+import scipy.signal as ss
 
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
@@ -70,6 +71,8 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.csvButton.clicked.connect(self.importCSV)
         self.plotTemporalButton.clicked.connect(self.plotTemporalSignals)
         self.addPolesZeros.clicked.connect(self.plotPolesZeros)
+        self.addTemporalFunctionButton.clicked.connect(self.addTemporalFunction)
+        self.deleteFunctionsButton.clicked.connect(self.deleteFunctions)
 
     # Funciones de las pestañas y clicks
 
@@ -129,6 +132,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         else:
             self.currentFunction.setTransferFunction()
             self.currentFunction.origin = 'Transfer'
+            self.currentFunction.plotType = 'Frequency'
 
             functionName = QInputDialog.getText(self, 'Agregar función', 'Nombre de la función:')[0]
             if len(functionName) < 1:
@@ -242,6 +246,66 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             msgBox.setWindowTitle("Advertencia")
             msgBox.exec()
 
+    # Agrega una función periódica ingresada por el usuario y crea las salidas correspondientes
+    # para las funciones ingresadas por función transferencia
+    def addTemporalFunction(self):
+        freq = self.freqDoubleBox.value() * (10 ** self.freqMultiplicador.value())
+        amp = self.amplitudeDoubleBox.value() * (10 ** self.amplitudeMultiplicador.value())
+        offset = self.offsetDoubleBox.value() * (10 ** self.offsetMultiplier.value())
+        phase = self.phaseSpinBox.value()
+        dutycycle = self.dutyCycleDoubleBox.value()
+        simetry = self.simetryDoubleBox.value()
+
+        mintime = self.minTimeValue.value() * (10 ** self.minTimeMultiplier.value())
+        maxtime = self.maxTimeValue.value() * (10 ** self.maxTimeMultiplier.value())
+
+        points = np.linspace(mintime, maxtime, 5000, endpoint=True)
+        inputPoints = None
+
+        if self.entradaComboBox.currentText() == 'Senoide':
+            inputPoints = amp * np.sin(2 * np.pi * freq * points + phase) + offset
+
+        elif self.entradaComboBox.currentText() == 'Cuadrada':
+            auxPoints = points * freq * (2*np.pi)
+            inputPoints = amp * ss.square(auxPoints, dutycycle/100) + offset
+
+        elif self.entradaComboBox.currentText() == 'Rampa':
+            auxPoints = points * freq * (2*np.pi)
+            inputPoints = amp * ss.sawtooth(auxPoints, simetry/100) + offset
+
+        # Agregamos la función
+        functionName = QInputDialog.getText(self, 'Señal de entrada', 'Nombre la función: ')[0]
+        if len(functionName) < 1:
+            functionName = "Función " + str(len(self.functions))
+
+        newFunction = InputFunction(origin='Input', name=functionName)
+        newFunction.setTemporal(points, inputPoints)
+        newFunction.plotType = 'Temporal'
+
+        self.functions.append(newFunction)
+
+        item = QListWidgetItem(functionName)
+        item.setCheckState(Qt.Checked)
+
+        self.functionsList.addItem(item)
+
+        for i in range(len(self.functions)):
+                if self.functions[i].origin == 'Transfer':
+                    name = functionName + '-' + self.functions[i].name
+                    newFunction = InputFunction(origin='Output', name=name)
+
+                    tout, yout = self.functions[i].calculateOutput(points, inputPoints)
+
+                    newFunction.setTemporal(tout, yout)
+                    newFunction.plotType = 'Temporal'
+
+                    self.functions.append(newFunction)
+
+                    item = QListWidgetItem(name)
+                    item.setCheckState(Qt.Checked)
+
+                    self.functionsList.addItem(item)
+
 
     # Grafica Bode en función de las funciones seleccionadas y su origen
     def updateBodePlot(self):
@@ -286,6 +350,8 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
         self.axesAmplitude.grid(True, which='both')
         self.axesPhase.grid(True, which='both')
+        self.axesAmplitude.axhline(0, color='black', linewidth=1)
+        self.axesPhase.axhline(0, color='black', linewidth=1)
 
         self.axesAmplitude.legend(loc=0)
         self.axesPhase.legend(loc=0)
@@ -297,32 +363,17 @@ class MyWindow(QMainWindow, Ui_MainWindow):
     def plotTemporalSignals(self):
         self.axesTemporal.clear()
 
+        mintime = self.minTimeValue.value() * (10 ** self.minTimeMultiplier.value())
+        maxtime = self.maxTimeValue.value() * (10 ** self.maxTimeMultiplier.value())
+
         for i in range(len(self.functions)):
             if self.functionsList.item(i).checkState() == 2:
-
-                # Caso de ingresar función transferencia
-                '''if self.functions[i].origin == 'Transfer':
-                    if self.freqMode.currentText() == 'Hz':
-                        minFreq = minFrequency * 2 * np.pi
-                        maxFreq = maxFrequency * 2 * np.pi
-
-                    w = np.logspace((np.log10(minFreq)), (np.log10(maxFreq)), num=5000)
-
-                    freq, mag, phase = self.functions[i].calculateBode(w=w)
-
-                    if self.freqMode.currentText() == 'Hz':
-                        freq = freq / (2 * np.pi)
-
-                    self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
-                    self.axesPhase.semilogx(freq, phase, label=self.functions[i].name)'''
-
-                # Caso LTSpice o CSV
-                if (self.functions[i].origin == 'Spice' or self.functions[i].origin == 'CSV') \
-                        and self.functions[i].plotType == 'Temporal':
+                if self.functions[i].plotType == 'Temporal':
                     time, signal = self.functions[i].time, self.functions[i].signal
 
                     self.axesTemporal.plot(time, signal, label=self.functions[i].name)
 
+        self.axesTemporal.set_xlim(mintime, maxtime)
         self.axesTemporal.grid(visible=True)
         self.axesTemporal.axhline(0, color='black', linewidth=1)
         self.axesTemporal.axvline(0, color='black', linewidth=1)
@@ -358,3 +409,10 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.axesPolesZeros.legend(loc=0)
 
         self.figurePolesZeros.canvas.draw()
+
+    def deleteFunctions(self):
+        numberOfFunctions = len(self.functions)
+        for i in range(numberOfFunctions):
+            if self.functionsList.item(numberOfFunctions-1-i).checkState() == 2:
+                self.functionsList.takeItem(numberOfFunctions-1-i)
+                self.functions.pop(numberOfFunctions-1-i)

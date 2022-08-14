@@ -39,6 +39,11 @@ class InputFunction:
     def calculatePolesZeros(self):
         return self.transferFunction.poles, self.transferFunction.zeros
 
+    def calculateOutput(self, tiempo = None, entrada = None):
+        t, y, x = ss.lsim(self.transferFunction, U = entrada, T = tiempo)
+
+        return t, y
+
     def setBode(self, f, m, p):
         self.freq = f
         self.mag = m

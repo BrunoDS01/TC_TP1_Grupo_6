@@ -219,15 +219,48 @@
                <height>16777215</height>
               </size>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
-              <item>
+             <layout class="QGridLayout" name="gridLayout_16">
+              <item row="4" column="1">
+               <widget class="QSpinBox" name="minTimeMultiplier">
+                <property name="minimum">
+                 <number>-12</number>
+                </property>
+                <property name="maximum">
+                 <number>12</number>
+                </property>
+                <property name="singleStep">
+                 <number>3</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_16">
+                <property name="text">
+                 <string>Rango de tiempo</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QSpinBox" name="maxTimeMultiplier">
+                <property name="minimum">
+                 <number>-12</number>
+                </property>
+                <property name="maximum">
+                 <number>12</number>
+                </property>
+                <property name="singleStep">
+                 <number>3</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="2">
                <widget class="QLabel" name="label_2">
                 <property name="text">
                  <string>Configuración función</string>
                 </property>
                </widget>
               </item>
-              <item>
+              <item row="1" column="0" colspan="2">
                <widget class="QComboBox" name="entradaComboBox">
                 <item>
                  <property name="text">
@@ -246,7 +279,28 @@
                 </item>
                </widget>
               </item>
-              <item>
+              <item row="5" column="0">
+               <widget class="QDoubleSpinBox" name="maxTimeValue">
+                <property name="maximum">
+                 <double>1000000000.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0" colspan="2">
+               <widget class="QPushButton" name="addTemporalFunctionButton">
+                <property name="text">
+                 <string>Agregar señal temporal</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QDoubleSpinBox" name="minTimeValue">
+                <property name="maximum">
+                 <double>1000000000.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
                <widget class="QStackedWidget" name="entradaConfStacked">
                 <property name="currentIndex">
                  <number>0</number>
@@ -254,7 +308,7 @@
                 <widget class="QWidget" name="ampFrecPage">
                  <layout class="QGridLayout" name="gridLayout_10">
                   <item row="3" column="1">
-                   <widget class="QDoubleSpinBox" name="doubleSpinBox">
+                   <widget class="QDoubleSpinBox" name="phaseSpinBox">
                     <property name="minimum">
                      <double>-360.000000000000000</double>
                     </property>
@@ -278,7 +332,17 @@
                    </widget>
                   </item>
                   <item row="2" column="2">
-                   <widget class="QSpinBox" name="offsetSenMultiplier"/>
+                   <widget class="QSpinBox" name="offsetMultiplier">
+                    <property name="minimum">
+                     <number>-12</number>
+                    </property>
+                    <property name="maximum">
+                     <number>12</number>
+                    </property>
+                    <property name="singleStep">
+                     <number>3</number>
+                    </property>
+                   </widget>
                   </item>
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_13">
@@ -288,10 +352,10 @@
                    </widget>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QDoubleSpinBox" name="offsetSen"/>
+                   <widget class="QDoubleSpinBox" name="offsetDoubleBox"/>
                   </item>
                   <item row="0" column="1">
-                   <widget class="QDoubleSpinBox" name="frecSenDoubleBox">
+                   <widget class="QDoubleSpinBox" name="freqDoubleBox">
                     <property name="minimum">
                      <double>0.010000000000000</double>
                     </property>
@@ -304,7 +368,7 @@
                    </widget>
                   </item>
                   <item row="0" column="2">
-                   <widget class="QSpinBox" name="frecuenciaSenMultiplicador">
+                   <widget class="QSpinBox" name="freqMultiplicador">
                     <property name="minimum">
                      <number>-12</number>
                     </property>
@@ -317,7 +381,7 @@
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QDoubleSpinBox" name="amplitudSenDoubleBox">
+                   <widget class="QDoubleSpinBox" name="amplitudeDoubleBox">
                     <property name="minimum">
                      <double>0.010000000000000</double>
                     </property>
@@ -330,7 +394,7 @@
                    </widget>
                   </item>
                   <item row="1" column="2">
-                   <widget class="QSpinBox" name="amplitudSenMultiplicador">
+                   <widget class="QSpinBox" name="amplitudeMultiplicador">
                     <property name="minimum">
                      <number>-12</number>
                     </property>
@@ -352,14 +416,14 @@
                   <item row="4" column="0">
                    <widget class="QLabel" name="label_14">
                     <property name="text">
-                     <string>Duty Cycle (cuadrada)</string>
+                     <string>Duty Cycle [%]</string>
                     </property>
                    </widget>
                   </item>
                   <item row="5" column="0">
                    <widget class="QLabel" name="label_15">
                     <property name="text">
-                     <string>Simetría (Rampa)</string>
+                     <string>Simetría [%] (rampa)</string>
                     </property>
                    </widget>
                   </item>
@@ -379,107 +443,6 @@
                   </item>
                  </layout>
                 </widget>
-                <widget class="QWidget" name="ampPage">
-                 <layout class="QVBoxLayout" name="verticalLayout_10"/>
-                </widget>
-                <widget class="QWidget" name="page_5">
-                 <layout class="QGridLayout" name="gridLayout_12">
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="label_11">
-                    <property name="text">
-                     <string>Duty Cycle [%]</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="1">
-                   <widget class="QDoubleSpinBox" name="dutyCicleDoubleBox">
-                    <property name="minimum">
-                     <double>0.000000000000000</double>
-                    </property>
-                    <property name="maximum">
-                     <double>100.000000000000000</double>
-                    </property>
-                    <property name="value">
-                     <double>50.000000000000000</double>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_9">
-                    <property name="text">
-                     <string>Amplitud [V]</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QDoubleSpinBox" name="amplitudPulsoDoubleBox">
-                    <property name="minimum">
-                     <double>0.010000000000000</double>
-                    </property>
-                    <property name="maximum">
-                     <double>10000000000.000000000000000</double>
-                    </property>
-                    <property name="value">
-                     <double>1.000000000000000</double>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_12">
-                    <property name="text">
-                     <string>Frecuencia [Hz]</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QDoubleSpinBox" name="frecuenciaPulsoDoubleBox">
-                    <property name="minimum">
-                     <double>0.010000000000000</double>
-                    </property>
-                    <property name="maximum">
-                     <double>10000000000.000000000000000</double>
-                    </property>
-                    <property name="value">
-                     <double>1.000000000000000</double>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="2">
-                   <widget class="QSpinBox" name="amplitudPulsoMultiplicador">
-                    <property name="minimum">
-                     <number>-12</number>
-                    </property>
-                    <property name="maximum">
-                     <number>12</number>
-                    </property>
-                    <property name="singleStep">
-                     <number>3</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="2">
-                   <widget class="QSpinBox" name="frecuenciaPulsoMultiplicador">
-                    <property name="minimum">
-                     <number>-12</number>
-                    </property>
-                    <property name="maximum">
-                     <number>12</number>
-                    </property>
-                    <property name="singleStep">
-                     <number>3</number>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-                <widget class="QWidget" name="page_6"/>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="addTemporalFunction">
-                <property name="text">
-                 <string>Agregar señal temporal</string>
-                </property>
                </widget>
               </item>
              </layout>
@@ -842,7 +805,7 @@
      </widget>
     </item>
     <item row="3" column="2">
-     <widget class="QPushButton" name="deleteFunctions">
+     <widget class="QPushButton" name="deleteFunctionsButton">
       <property name="text">
        <string>Borrar Funciones</string>
       </property>
