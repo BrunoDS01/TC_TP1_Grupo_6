@@ -3,6 +3,9 @@ def readSpiceBode(filePath):
     file = open(filePath, 'r')
     lines = file.readlines()
 
+    while "\n" in lines:
+        lines.remove("\n")
+
     # Empezamos a guardar datos cuando el primer caracter de un renglón sea un número
 
     numberCharacters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '-', '+'}
@@ -29,6 +32,9 @@ def readSpiceBode(filePath):
 def readSpiceTime(filePath):
     file = open(filePath, 'r')
     lines = file.readlines()
+
+    while "\n" in lines:
+        lines.remove("\n")
 
     # Empezamos a guardar datos cuando el primer caracter de un renglón sea un número
 
@@ -59,6 +65,9 @@ def readCSVBode(filePath):
     file = open(filePath, 'r')
     lines = file.readlines()
 
+    while "\n" in lines:
+        lines.remove("\n")
+
     # Empezamos a guardar datos cuando el primer caracter de un renglón sea un número
     numberCharacters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '-', '+'}
 
@@ -81,6 +90,9 @@ def readCSVBode(filePath):
 def readCSVTime(filePath):
     file = open(filePath, 'r')
     lines = file.readlines()
+
+    while "\n" in lines:
+        lines.remove("\n")
 
     # Empezamos a guardar datos cuando el primer caracter de un renglón sea un número
 

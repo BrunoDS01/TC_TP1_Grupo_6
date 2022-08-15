@@ -227,7 +227,8 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             except:
                 msgBox = QMessageBox()
                 msgBox.setIcon(QMessageBox.Warning)
-                msgBox.setText("Error al importar datos Spice")
+                msgBox.setText("Error al importar datos Spice.\n Asegúrese de haber seleccionado"
+                               "correctamente si es una respuesta en frecuencia o temporal")
                 msgBox.setWindowTitle("Advertencia")
                 msgBox.exec()
 
@@ -283,7 +284,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             except:
                 msgBox = QMessageBox()
                 msgBox.setIcon(QMessageBox.Warning)
-                msgBox.setText("Error al importar datos CSV. Asegúrese no ingresar números al comienzo de cada línea antes de los datos")
+                msgBox.setText("Error al importar datos CSV. "
+                               "Asegúrese de no ingresar números al comienzo de cada línea antes de los datos"
+                               "y de haber seleccionado correctamente respuesta en frecuencia o temporal")
                 msgBox.setWindowTitle("Advertencia")
                 msgBox.exec()
 
