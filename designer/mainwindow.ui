@@ -15,30 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="3" column="2">
-     <widget class="QPushButton" name="deleteFunctionsButton">
-      <property name="text">
-       <string>Borrar Funciones</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QListWidget" name="functionsList">
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>150</width>
-        <height>600</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" rowspan="4">
+    <item row="1" column="0" rowspan="5">
      <widget class="QFrame" name="frame_2">
       <property name="minimumSize">
        <size>
@@ -364,7 +341,36 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="1" rowspan="4">
+    <item row="4" column="2">
+     <widget class="QPushButton" name="deleteFunctionsButton">
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Borrar Funciones</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QListWidget" name="functionsList">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>600</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" rowspan="5">
      <widget class="QTabWidget" name="plotWidget">
       <property name="minimumSize">
        <size>
@@ -515,7 +521,7 @@
                 <number>3</number>
                </property>
                <property name="value">
-                <number>0</number>
+                <number>6</number>
                </property>
               </widget>
              </item>
@@ -733,6 +739,9 @@
                   </property>
                   <property name="maximum">
                    <double>1000000000.000000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>1.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -1136,10 +1145,29 @@
       </widget>
      </widget>
     </item>
-    <item row="4" column="2">
+    <item row="5" column="2">
      <widget class="QPushButton" name="deleteAllFunctionsButton">
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="text">
        <string>Borrar todas las funciones</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="changeNameButton">
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Cambiar nombre</string>
       </property>
      </widget>
     </item>
@@ -1154,8 +1182,8 @@
  </slots>
  <buttongroups>
   <buttongroup name="buttonGroup_4"/>
+  <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

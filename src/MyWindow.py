@@ -78,6 +78,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.eraseTemporalPlotsButton.clicked.connect(self.eraseTemporalPlots)
         self.erasePolesPlotButton.clicked.connect(self.erasePolesPlot)
         self.deleteAllFunctionsButton.clicked.connect(self.deleteAllFunctions)
+        self.changeNameButton.clicked.connect(self.changeFunctionsNames)
 
     # Funciones de las pestañas y clicks
 
@@ -139,7 +140,10 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             self.currentFunction.origin = 'Transfer'
             self.currentFunction.plotType = 'Frequency'
 
-            functionName = QInputDialog.getText(self, 'Agregar función', 'Nombre de la función:')[0]
+            functionName, ok = QInputDialog.getText(self, 'Agregar función', 'Nombre de la función:')
+            if not ok:
+                return
+
             if len(functionName) < 1:
                 functionName = "Función " + str(len(self.functions))
 
@@ -162,7 +166,11 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                 if self.frequencyButton.isChecked():
 
                     freq, mag, phase = readSpiceBode(filepath)
-                    functionName = QInputDialog.getText(self, 'LTSpice', 'Nombre de la función:')[0]
+                    functionName, ok = QInputDialog.getText(self, 'LTSpice', 'Nombre de la función:')
+
+                    if not ok:
+                        return
+
                     if len(functionName) < 1:
                         functionName = "Función " + str(len(self.functions))
 
@@ -182,7 +190,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                     data = readSpiceTime(filepath)
 
                     for i in range(1, len(data)):
-                        functionName = QInputDialog.getText(self, 'LTSpice', 'Nombre la función: ' + str(i))[0]
+                        functionName,ok = QInputDialog.getText(self, 'LTSpice', 'Nombre la función: ' + str(i))
+                        if not ok:
+                            return
                         if len(functionName) < 1:
                             functionName = "Función " + str(len(self.functions))
 
@@ -211,7 +221,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                 if self.frequencyButton.isChecked():
 
                     freq, mag, phase = readCSVBode(filepath)
-                    functionName = QInputDialog.getText(self, 'CSV', 'Nombre de la función:')[0]
+                    functionName, ok = QInputDialog.getText(self, 'CSV', 'Nombre de la función:')
+                    if not ok:
+                        return
                     if len(functionName) < 1:
                         functionName = "Función " + str(len(self.functions))
 
@@ -234,7 +246,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                     data = readCSVTime(filepath)
 
                     for i in range(1, len(data)):
-                        functionName = QInputDialog.getText(self, 'CSV', 'Nombre de la función:' + str(i))[0]
+                        functionName, ok = QInputDialog.getText(self, 'CSV', 'Nombre de la función:' + str(i))
+                        if not ok:
+                            return
                         if len(functionName) < 1:
                             functionName = "Función " + str(len(self.functions))
 
@@ -269,6 +283,14 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         mintime = self.minTimeValue.value() * (10 ** self.minTimeMultiplier.value())
         maxtime = self.maxTimeValue.value() * (10 ** self.maxTimeMultiplier.value())
 
+        if mintime >= maxtime:
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setText("El tiempo mínimo es mayor o igual al tiempo máximo!")
+            msgBox.setWindowTitle("Advertencia")
+            msgBox.exec()
+            return
+
         points = np.linspace(mintime, maxtime, 5000, endpoint=True)
         inputPoints = None
 
@@ -282,7 +304,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             inputPoints = amp * ss.sawtooth(2 * np.pi * freq * points + phase*np.pi/180, simetry/100) + offset
 
         # Agregamos la función
-        functionName = QInputDialog.getText(self, 'Señal de entrada', 'Nombre la función: ')[0]
+        functionName, ok = QInputDialog.getText(self, 'Señal de entrada', 'Nombre la función: ')
+        if not ok:
+            return
         if len(functionName) < 1:
             functionName = "Función " + str(len(self.functions))
 
@@ -322,6 +346,16 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
         minFrequency = self.minFreqValue.value() * (10 ** self.minFreqMultiplier.value())
         maxFrequency = self.maxFreqValue.value() * (10 ** self.maxFreqMultiplier.value())
+
+        if minFrequency >= maxFrequency:
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setText("La frecuencia mínima es mayor o igual a la frecuencia máxima!")
+            msgBox.setWindowTitle("Advertencia")
+            msgBox.exec()
+            return
+
+
 
         for i in range(len(self.functions)):
             if self.functionsList.item(i).checkState() == 2:
@@ -404,6 +438,14 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         mintime = self.minTimeValue.value() * (10 ** self.minTimeMultiplier.value())
         maxtime = self.maxTimeValue.value() * (10 ** self.maxTimeMultiplier.value())
 
+        if mintime >= maxtime:
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setText("El tiempo mínimo es mayor o igual al tiempo máximo!")
+            msgBox.setWindowTitle("Advertencia")
+            msgBox.exec()
+            return
+
         for i in range(len(self.functions)):
             if self.functionsList.item(i).checkState() == 2:
                 if self.functions[i].plotType == 'Temporal':
@@ -437,11 +479,11 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
                 if len(poles) != 0:
                     polesLine = self.axesPolesZeros.scatter(np.real(poles), np.imag(poles),
-                                                            marker='x', label='Polos' + self.functions[i].name)
+                                                            marker='x', label='Polos ' + self.functions[i].name)
 
                 if len(zeros) != 0:
                     self.zerosLine = self.axesPolesZeros.scatter(np.real(zeros), np.imag(zeros),
-                                                                 marker='o', label='Ceros' + self.functions[i].name)
+                                                                 marker='o', label='Ceros ' + self.functions[i].name)
 
         self.axesPolesZeros.grid(visible=True)
         self.axesPolesZeros.axhline(0, color='black', linewidth=1)
@@ -482,3 +524,11 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.axesPolesZeros.clear()
         self.canvasPolesZeros.draw()
 
+    def changeFunctionsNames(self):
+        for i in range(len(self.functions)):
+            if self.functionsList.item(i).checkState() == 2:
+                functionName, ok = QInputDialog.getText(self, self.functions[i].name, 'Cambiar nombre: ')
+                if not ok:
+                    return
+                self.functionsList.item(i).setText(functionName)
+                self.functions[i].name = functionName
