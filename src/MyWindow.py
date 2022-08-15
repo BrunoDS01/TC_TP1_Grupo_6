@@ -13,8 +13,8 @@ import scipy.signal as ss
 
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
-from InputFunction import InputFunction
-from ImportData import readSpiceBode, readSpiceTime, readCSVBode, readCSVTime
+from src.InputFunction import InputFunction
+from src.ImportData import readSpiceBode, readSpiceTime, readCSVBode, readCSVTime
 
 
 class MyWindow(QMainWindow, Ui_MainWindow):
@@ -150,14 +150,31 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             self.currentFunction.name = functionName
 
             self.functions.append(self.currentFunction)
-            self.currentFunction = InputFunction()
-            self.numLabel.setText('1')
-            self.denLabel.setText('1')
 
             item = QListWidgetItem(functionName)
             item.setCheckState(Qt.Checked)
 
             self.functionsList.addItem(item)
+
+            for i in range(len(self.functions)):
+                if self.functions[i].origin == 'Input':
+                    name = functionName + '-' + self.functions[i].name + '-Output'
+                    newFunction = InputFunction(origin='Output', name=name)
+
+                    tout, yout = self.currentFunction.calculateOutput(self.functions[i].time, self.functions[i].signal)
+
+                    newFunction.setTemporal(tout, yout)
+                    newFunction.plotType = 'Temporal'
+
+                    self.functions.append(newFunction)
+
+                    item = QListWidgetItem(name)
+                    item.setCheckState(Qt.Checked)
+
+                    self.functionsList.addItem(item)
+            self.currentFunction = InputFunction()
+            self.numLabel.setText('1')
+            self.denLabel.setText('1')
 
     def importSpice(self):
         filepath = QFileDialog.getOpenFileName(self, 'Open file', 'c:\\', "Text files (*.txt)")[0]
@@ -323,7 +340,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
         for i in range(len(self.functions)):
                 if self.functions[i].origin == 'Transfer':
-                    name = functionName + '-' + self.functions[i].name
+                    name = self.functions[i].name + '-' + functionName + '-Output'
                     newFunction = InputFunction(origin='Output', name=name)
 
                     tout, yout = self.functions[i].calculateOutput(points, inputPoints)
@@ -412,8 +429,16 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.axesAmplitude.set_xlim(minFrequency, maxFrequency)
         self.axesPhase.set_xlim(minFrequency, maxFrequency)
 
-        self.axesAmplitude.grid(True, which='both')
-        self.axesPhase.grid(True, which='both')
+        self.axesAmplitude.grid(False, which='both')
+        self.axesPhase.grid(False, which='both')
+
+        if self.gridSimpleButton.isChecked():
+            self.axesAmplitude.grid(True, which='major')
+            self.axesPhase.grid(True, which='major')
+        if self.gridCompleteButton.isChecked():
+            self.axesAmplitude.grid(True, which='both')
+            self.axesPhase.grid(True, which='both')
+
         self.axesAmplitude.axhline(0, color='black', linewidth=1)
         self.axesPhase.axhline(0, color='black', linewidth=1)
 
@@ -435,17 +460,6 @@ class MyWindow(QMainWindow, Ui_MainWindow):
     def plotTemporalSignals(self):
         self.axesTemporal.clear()
 
-        mintime = self.minTimeValue.value() * (10 ** self.minTimeMultiplier.value())
-        maxtime = self.maxTimeValue.value() * (10 ** self.maxTimeMultiplier.value())
-
-        if mintime >= maxtime:
-            msgBox = QMessageBox()
-            msgBox.setIcon(QMessageBox.Warning)
-            msgBox.setText("El tiempo mínimo es mayor o igual al tiempo máximo!")
-            msgBox.setWindowTitle("Advertencia")
-            msgBox.exec()
-            return
-
         for i in range(len(self.functions)):
             if self.functionsList.item(i).checkState() == 2:
                 if self.functions[i].plotType == 'Temporal':
@@ -453,7 +467,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
                     self.axesTemporal.plot(time, signal, label=self.functions[i].name)
 
-        self.axesTemporal.set_xlim(mintime, maxtime)
+
         self.axesTemporal.grid(visible=True)
         self.axesTemporal.axhline(0, color='black', linewidth=1)
         self.axesTemporal.axvline(0, color='black', linewidth=1)
