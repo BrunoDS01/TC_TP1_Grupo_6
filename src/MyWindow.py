@@ -375,8 +375,6 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             msgBox.exec()
             return
 
-
-
         for i in range(len(self.functions)):
             if self.functionsList.item(i).checkState() == 2:
 
@@ -423,11 +421,21 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                         mag = [20 * np.log10(m) for m in mag]
 
                     if self.freqAxisLinealButton.isChecked():
-                        self.axesAmplitude.plot(freq, mag, label=self.functions[i].name)
-                        self.axesPhase.plot(freq, phase, label=self.functions[i].name)
+                        if self.functions[i].origin == 'CSV':
+                            self.axesAmplitude.scatter(freq, mag, label=self.functions[i].name, marker = '.')
+                            self.axesPhase.scatter(freq, phase, label=self.functions[i].name, marker = '.')
+                        else:
+                            self.axesAmplitude.plot(freq, mag, label=self.functions[i].name)
+                            self.axesPhase.plot(freq, phase, label=self.functions[i].name)
                     else:
-                        self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
-                        self.axesPhase.semilogx(freq, phase, label = self.functions[i].name)
+                        if self.functions[i].origin == 'CSV':
+                            self.axesAmplitude.set_xscale('log')
+                            self.axesPhase.set_xscale('log')
+                            self.axesAmplitude.scatter(freq, mag, label=self.functions[i].name, marker = '.')
+                            self.axesPhase.scatter(freq, phase, label=self.functions[i].name, marker = '.')
+                        else:
+                            self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
+                            self.axesPhase.semilogx(freq, phase, label = self.functions[i].name)
 
         self.axesAmplitude.set_xlim(minFrequency, maxFrequency)
         self.axesPhase.set_xlim(minFrequency, maxFrequency)
@@ -468,12 +476,17 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                 if self.functions[i].plotType == 'Temporal':
                     time, signal = self.functions[i].time, self.functions[i].signal
 
-                    self.axesTemporal.plot(time, signal, label=self.functions[i].name)
+                    if self.functions[i].origin == 'CSV':
+                        self.axesTemporal.scatter(time, signal, label=self.functions[i].name, marker = '.')
+                    else:
+                        self.axesTemporal.plot(time, signal, label=self.functions[i].name)
 
 
         self.axesTemporal.grid(visible=True)
         self.axesTemporal.axhline(0, color='black', linewidth=1)
         self.axesTemporal.axvline(0, color='black', linewidth=1)
+
+        self.axesTemporal.ticklabel_format(axis='both', style='sci')
 
         self.axesTemporal.set_xlabel(self.temporalXLabel.text())
         self.axesTemporal.set_ylabel(self.temporalYLabel.text())
@@ -502,6 +515,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                     self.zerosLine = self.axesPolesZeros.scatter(np.real(zeros), np.imag(zeros),
                                                                  marker='o', label='Ceros ' + self.functions[i].name)
 
+        self.axesPolesZeros.ticklabel_format(axis='both', style='sci')
         self.axesPolesZeros.grid(visible=True)
         self.axesPolesZeros.axhline(0, color='black', linewidth=1)
         self.axesPolesZeros.axvline(0, color='black', linewidth=1)  # marcamos los ejes
