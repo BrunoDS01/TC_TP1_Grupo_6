@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1230, 624)
+        MainWindow.resize(1205, 624)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
@@ -61,6 +61,7 @@ class Ui_MainWindow(object):
         self.coefDoubleBox = QtWidgets.QDoubleSpinBox(self.widget)
         self.coefDoubleBox.setMinimumSize(QtCore.QSize(0, 30))
         self.coefDoubleBox.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.coefDoubleBox.setMinimum(-10000000000.0)
         self.coefDoubleBox.setMaximum(1000000000000.0)
         self.coefDoubleBox.setObjectName("coefDoubleBox")
         self.gridLayout_7.addWidget(self.coefDoubleBox, 3, 1, 1, 1)

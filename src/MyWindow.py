@@ -415,27 +415,27 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                         freq = [fr * 2 * np.pi for fr in freq]
 
                     if self.yAxisLinealButton.isChecked() and self.functions[i].magType == 'dB':
-                        mag = [np.exp(m/20) for m in mag]
+                        mag = [10**(m/20) for m in mag]
 
                     elif self.yAxisDBButton.isChecked() and self.functions[i].magType == 'Lineal':
                         mag = [20 * np.log10(m) for m in mag]
 
                     if self.freqAxisLinealButton.isChecked():
-                        if self.functions[i].origin == 'CSV':
+                        '''if self.functions[i].origin == 'CSV':
                             self.axesAmplitude.scatter(freq, mag, label=self.functions[i].name, marker = '.')
                             self.axesPhase.scatter(freq, phase, label=self.functions[i].name, marker = '.')
-                        else:
-                            self.axesAmplitude.plot(freq, mag, label=self.functions[i].name)
-                            self.axesPhase.plot(freq, phase, label=self.functions[i].name)
+                        else:'''
+                        self.axesAmplitude.plot(freq, mag, label=self.functions[i].name)
+                        self.axesPhase.plot(freq, phase, label=self.functions[i].name)
                     else:
-                        if self.functions[i].origin == 'CSV':
+                        '''if self.functions[i].origin == 'CSV':
                             self.axesAmplitude.set_xscale('log')
                             self.axesPhase.set_xscale('log')
                             self.axesAmplitude.scatter(freq, mag, label=self.functions[i].name, marker = '.')
                             self.axesPhase.scatter(freq, phase, label=self.functions[i].name, marker = '.')
-                        else:
-                            self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
-                            self.axesPhase.semilogx(freq, phase, label = self.functions[i].name)
+                        else:'''
+                        self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
+                        self.axesPhase.semilogx(freq, phase, label = self.functions[i].name)
 
         self.axesAmplitude.set_xlim(minFrequency, maxFrequency)
         self.axesPhase.set_xlim(minFrequency, maxFrequency)
