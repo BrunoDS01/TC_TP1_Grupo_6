@@ -9,6 +9,7 @@ class InputFunction:
 
         self.plotType = None
         self.magType = None
+        self.plotMarker = None
 
         self.transferFunction = None
 
