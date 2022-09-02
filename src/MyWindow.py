@@ -279,6 +279,11 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                         newFunction.setTemporal(data[0], data[i])
                         newFunction.plotType = 'Temporal'
 
+                        if self.scatteredPlotButton.isChecked():
+                            newFunction.plotMarker = 'Scattered'
+                        else:
+                            newFunction.plotMarker = 'Line'
+
                         self.functions.append(newFunction)
 
                         item = QListWidgetItem(functionName)
@@ -427,8 +432,8 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
                     if self.freqAxisLinealButton.isChecked():
                         if self.functions[i].origin == 'CSV' and self.functions[i].plotMarker == 'Scattered':
-                            self.axesAmplitude.scatter(freq, mag, label=self.functions[i].name, marker = '.')
-                            self.axesPhase.scatter(freq, phase, label=self.functions[i].name, marker = '.')
+                            self.axesAmplitude.scatter(freq, mag, label=self.functions[i].name, marker = '.', zorder=10)
+                            self.axesPhase.scatter(freq, phase, label=self.functions[i].name, marker = '.', zorder=10)
                         else:
                             self.axesAmplitude.plot(freq, mag, label=self.functions[i].name)
                             self.axesPhase.plot(freq, phase, label=self.functions[i].name)
@@ -436,8 +441,8 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                         if self.functions[i].origin == 'CSV' and self.functions[i].plotMarker == 'Scattered':
                             self.axesAmplitude.set_xscale('log')
                             self.axesPhase.set_xscale('log')
-                            self.axesAmplitude.scatter(freq, mag, label=self.functions[i].name, marker = '.')
-                            self.axesPhase.scatter(freq, phase, label=self.functions[i].name, marker = '.')
+                            self.axesAmplitude.scatter(freq, mag, label=self.functions[i].name, marker = '.', zorder=10)
+                            self.axesPhase.scatter(freq, phase, label=self.functions[i].name, marker = '.', zorder=10)
                         else:
                             self.axesAmplitude.semilogx(freq, mag, label=self.functions[i].name)
                             self.axesPhase.semilogx(freq, phase, label = self.functions[i].name)
@@ -481,8 +486,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                 if self.functions[i].plotType == 'Temporal':
                     time, signal = self.functions[i].time, self.functions[i].signal
 
-                    if self.functions[i].origin == 'CSV':
-                        self.axesTemporal.scatter(time, signal, label=self.functions[i].name, marker = '.')
+                    if self.functions[i].origin == 'CSV' and self.functions[i].plotMarker == 'Scattered':
+
+                        self.axesTemporal.scatter(time, signal, label=self.functions[i].name, marker = '.', zorder=10)
                     else:
                         self.axesTemporal.plot(time, signal, label=self.functions[i].name)
 
