@@ -419,7 +419,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                 # Caso LTSpice o CSV
                 elif (self.functions[i].origin == 'Spice' or self.functions[i].origin == 'CSV') \
                         and self.functions[i].plotType == 'Frequency':
-                    freq, mag, phase = self.functions[i].freq, self.functions[i].mag, self.functions[i].phase
+                    freq, mag, phas = self.functions[i].freq, self.functions[i].mag, self.functions[i].phase
+
+                    phase = self.correctPhase(phas)
 
                     if self.freqMode.currentText() == 'Rad/s':
                         freq = [fr * 2 * np.pi for fr in freq]
@@ -574,3 +576,26 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                     return
                 self.functionsList.item(i).setText(functionName)
                 self.functions[i].name = functionName
+
+    def correctPhase(self, phase):
+        multiplier = 0
+        newPhase = []
+        finalPhase = []
+        for i in range(len(phase)):
+            newPhase.append(phase[i] % 360 - 360)
+
+        finalPhase.append(newPhase[0])
+
+        for i in range(1,len(newPhase)):
+            if abs(newPhase[i]-newPhase[i-1]) > 90:
+                if newPhase[i-1] < newPhase[i]:
+                    multiplier -= 1
+                    finalPhase.append(phase[i]+multiplier*360)
+                else:
+                    multiplier += 1
+                    finalPhase.append(phase[i]+multiplier*360)
+            else:
+                finalPhase.append(newPhase[i])
+
+        return finalPhase
+
