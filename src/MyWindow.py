@@ -177,7 +177,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             self.denLabel.setText('1')
 
     def importSpice(self):
-        filepath = QFileDialog.getOpenFileName(self, 'Open file', 'c:\\', "Text files (*.txt)")[0]
+        filepath = QFileDialog.getOpenFileName(self, 'Open file', '', "Text files (*.txt)")[0]
         if os.path.exists(filepath):
             try:
                 if self.frequencyButton.isChecked():
@@ -233,7 +233,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                 msgBox.exec()
 
     def importCSV(self):
-        filepath = QFileDialog.getOpenFileName(self, 'Abrir archivo', 'c:\\', "CSV files (*.csv)")[0]
+        filepath = QFileDialog.getOpenFileName(self, 'Abrir archivo', '', "CSV files (*.csv)")[0]
         if os.path.exists(filepath):
             try:
                 if self.frequencyButton.isChecked():
