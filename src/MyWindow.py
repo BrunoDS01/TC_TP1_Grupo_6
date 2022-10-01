@@ -590,12 +590,12 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             if abs(newPhase[i]-newPhase[i-1]) > 90:
                 if newPhase[i-1] < newPhase[i]:
                     multiplier -= 1
-                    finalPhase.append(phase[i]+multiplier*360)
+                    finalPhase.append(newPhase[i]+multiplier*360)
                 else:
                     multiplier += 1
-                    finalPhase.append(phase[i]+multiplier*360)
+                    finalPhase.append(newPhase[i]+multiplier*360)
             else:
-                finalPhase.append(newPhase[i])
+                finalPhase.append(newPhase[i]+multiplier*360)
 
         return finalPhase
 
